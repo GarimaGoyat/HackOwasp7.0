@@ -1,0 +1,27 @@
+{
+  "canisters": {
+    "proofnest_backend": {
+      "candid": "src/proofnest_backend/proofnest_backend.did",
+      "package": "proofnest_backend",
+      "type": "rust"
+    },
+    "proofnest_frontend": {
+      "dependencies": [
+        "proofnest_backend"
+      ],
+      "source": [
+        "src/proofnest_frontend/dist"
+      ],
+      "type": "assets",
+      "workspace": "proofnest_frontend"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}
