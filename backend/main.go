@@ -14,6 +14,7 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
+	"github.com/your_project/routes"
 )
 
 var bc *blockchain.Blockchain
@@ -189,8 +190,17 @@ func main() {
 	// Verification request endpoint
 	api.HandleFunc("/verification/request", requestVerification).Methods("POST")
 
+	// Verification routes
+	http.HandleFunc("/api/verification/submit", routes.SubmitVerificationRequest)
+	http.HandleFunc("/api/verification/requests", routes.GetVerificationRequests)
+	http.HandleFunc("/api/verification/update", routes.UpdateVerificationStatus)
+
+	// New routes for products
+	http.HandleFunc("/api/products", routes.GetAllProducts)
+	http.HandleFunc("/api/products/add", routes.AddProduct)
+
 	fmt.Println("Server running on :8080")
-	log.Fatal(http.ListenAndServe(":8080", r))
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 
 // Helper function to get env vars with defaults

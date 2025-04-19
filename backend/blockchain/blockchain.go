@@ -9,19 +9,10 @@ import (
 	"time"
 )
 
-type Product struct {
-	ID        int    `json:"id"`
-	Name      string `json:"name"`
-	Price     string `json:"price"`
-	Shop      string `json:"shop"`
-	OnBlinkit bool   `json:"onBlinkit"`
-	Location  string `json:"location,omitempty"`
-}
-
 type Block struct {
 	Index     int
 	Timestamp string
-	Product   Product
+	Data      interface{}
 	PrevHash  string
 	Hash      string
 }
@@ -33,13 +24,13 @@ type Blockchain struct {
 
 func NewBlockchain() *Blockchain {
 
-	// Create an empty product for genesis block
-	emptyProduct := Product{}
+	// Create an empty data for genesis block
+	emptyData := map[string]interface{}{}
 
 	genesisBlock := &Block{
 		Index:     0,
 		Timestamp: time.Now().String(),
-		Product:   emptyProduct,
+		Data:      emptyData,
 		PrevHash:  "",
 		Hash:      "",
 	}
@@ -49,7 +40,7 @@ func NewBlockchain() *Blockchain {
 	}
 }
 
-func (bc *Blockchain) AddBlock(product Product) *Block {
+func (bc *Blockchain) AddBlock(data interface{}) *Block {
 	bc.mutex.Lock()
 	defer bc.mutex.Unlock()
 
@@ -57,7 +48,7 @@ func (bc *Blockchain) AddBlock(product Product) *Block {
 	newBlock := &Block{
 		Index:     prevBlock.Index + 1,
 		Timestamp: time.Now().Format(time.RFC3339),
-		Product:   product,
+		Data:      data,
 		PrevHash:  prevBlock.Hash,
 	}
 	newBlock.Hash = calculateHash(newBlock)
@@ -66,10 +57,10 @@ func (bc *Blockchain) AddBlock(product Product) *Block {
 }
 
 func calculateHash(block *Block) string {
-	productJson, _ := json.Marshal(block.Product)
+	dataJson, _ := json.Marshal(block.Data)
 
 	// make the record
-	record := fmt.Sprintf("%d%s%s%s%s", block.Index, block.Timestamp, block.PrevHash, string(productJson), block.PrevHash)
+	record := fmt.Sprintf("%d%s%s%s%s", block.Index, block.Timestamp, block.PrevHash, string(dataJson), block.PrevHash)
 	h := sha256.New()
 	h.Write([]byte(record))
 	hash := h.Sum(nil)
@@ -95,45 +86,23 @@ func (bc *Blockchain) GetBlocks() []*Block {
 	return bc.blocks
 }
 
-// Add these methods to blockchain.go
-
-// Get all products stored in the blockchain
-func (bc *Blockchain) GetAllProducts() []Product {
-	bc.mutex.Lock()
-	defer bc.mutex.Unlock()
-
-	var products []Product
-	for _, block := range bc.blocks {
-		if block.Index > 0 { // Skip genesis block
-			products = append(products, block.Product)
-		}
-	}
-	return products
+// ShopVerificationRequest represents a shopkeeper's verification request
+type ShopVerificationRequest struct {
+	ShopID    string `json:"shop_id"`
+	ShopName  string `json:"shop_name"`
+	OwnerName string `json:"owner_name"`
+	Status    string `json:"status"` // Pending, Approved, Rejected
+	Timestamp string `json:"timestamp"`
 }
 
-// Get product by ID
-func (bc *Blockchain) GetProductById(id int) (Product, bool) {
-	bc.mutex.Lock()
-	defer bc.mutex.Unlock()
-
-	for _, block := range bc.blocks {
-		if block.Product.ID == id {
-			return block.Product, true
-		}
+// AddShopVerificationRequest adds a new verification request to the blockchain
+func (bc *Blockchain) AddShopVerificationRequest(request ShopVerificationRequest) {
+	blockData := map[string]interface{}{
+		"shop_id":    request.ShopID,
+		"shop_name":  request.ShopName,
+		"owner_name": request.OwnerName,
+		"status":     request.Status,
+		"timestamp":  request.Timestamp,
 	}
-	return Product{}, false
-}
-
-// Get products by shop
-func (bc *Blockchain) GetProductsByShop(shopName string) []Product {
-	bc.mutex.Lock()
-	defer bc.mutex.Unlock()
-
-	var products []Product
-	for _, block := range bc.blocks {
-		if block.Index > 0 && block.Product.Shop == shopName {
-			products = append(products, block.Product)
-		}
-	}
-	return products
+	bc.AddBlock(blockData)
 }

@@ -1,59 +1,79 @@
 import React, { useState } from "react";
-import axios from "axios";
-import "./VerificationRequest.css";
+import "./VerificationRequestPage.css";
 
 const VerificationRequestPage = () => {
-  const [formData, setFormData] = useState({
-    businessName: "",
-    address: "",
-    documentUrl: "",
-  });
-  const [success, setSuccess] = useState("");
-  const [error, setError] = useState("");
-
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  const [shopName, setShopName] = useState("");
+  const [ownerName, setOwnerName] = useState("");
+  const [address, setAddress] = useState("");
+  const [documentUrl, setDocumentUrl] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
-    setSuccess("");
+    setSuccessMessage("");
+    setErrorMessage("");
+
+    const requestData = {
+      shop_name: shopName,
+      owner_name: ownerName,
+      address,
+      document_url: documentUrl,
+    };
 
     try {
-      await axios.post("/api/verification/request", formData, {
-        withCredentials: true,
+      const response = await fetch("/api/verification/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(requestData),
       });
-      setSuccess("Verification request submitted successfully!");
-      setFormData({ businessName: "", address: "", documentUrl: "" });
-    } catch (err) {
-      setError("Failed to submit verification request. Please try again.");
+
+      if (response.ok) {
+        setSuccessMessage("Verification request submitted successfully!");
+        setShopName("");
+        setOwnerName("");
+        setAddress("");
+        setDocumentUrl("");
+      } else {
+        setErrorMessage("Failed to submit verification request. Please try again.");
+      }
+    } catch (error) {
+      setErrorMessage("An error occurred. Please try again.");
     }
   };
 
   return (
-    <div className="verification-request-container">
-      <h2>Request Verification</h2>
-      {error && <div className="error-message">{error}</div>}
-      {success && <div className="success-message">{success}</div>}
-      <form onSubmit={handleSubmit}>
+    <div className="verification-page-container">
+      <h1>Request Shop Verification</h1>
+      {successMessage && <div className="success-message">{successMessage}</div>}
+      {errorMessage && <div className="error-message">{errorMessage}</div>}
+      <form className="verification-form" onSubmit={handleSubmit}>
         <label>
-          Business Name:
+          Shop Name:
           <input
             type="text"
-            name="businessName"
-            value={formData.businessName}
-            onChange={handleChange}
+            value={shopName}
+            onChange={(e) => setShopName(e.target.value)}
+            placeholder="Enter your shop name"
+            required
+          />
+        </label>
+        <label>
+          Owner Name:
+          <input
+            type="text"
+            value={ownerName}
+            onChange={(e) => setOwnerName(e.target.value)}
+            placeholder="Enter your name"
             required
           />
         </label>
         <label>
           Address:
-          <input
-            type="text"
-            name="address"
-            value={formData.address}
-            onChange={handleChange}
+          <textarea
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+            placeholder="Enter your shop address"
             required
           />
         </label>
@@ -61,24 +81,15 @@ const VerificationRequestPage = () => {
           Document URL:
           <input
             type="text"
-            name="documentUrl"
-            value={formData.documentUrl}
-            onChange={handleChange}
+            value={documentUrl}
+            onChange={(e) => setDocumentUrl(e.target.value)}
+            placeholder="Provide a document URL for verification"
             required
           />
         </label>
-        <div className="form-buttons">
-          <button type="submit" className="submit-button">
-            Submit
-          </button>
-          <button
-            type="button"
-            className="cancel-button"
-            onClick={() => (window.location.href = "/dashboard")}
-          >
-            Cancel
-          </button>
-        </div>
+        <button type="submit" className="submit-button">
+          Submit Request
+        </button>
       </form>
     </div>
   );
