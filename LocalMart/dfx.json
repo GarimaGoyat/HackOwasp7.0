@@ -1,19 +1,19 @@
 {
   "canisters": {
-    "proofnest_backend": {
-      "candid": "src/proofnest_backend/proofnest_backend.did",
-      "package": "proofnest_backend",
+    "LocalMart_backend": {
+      "candid": "src/LocalMart_backend/LocalMart_backend.did",
+      "package": "LocalMart_backend",
       "type": "rust"
     },
-    "proofnest_frontend": {
+    "LocalMart_frontend": {
       "dependencies": [
-        "proofnest_backend"
+        "LocalMart_backend"
       ],
       "source": [
-        "src/proofnest_frontend/dist"
+        "src/LocalMart_frontend/dist"
       ],
       "type": "assets",
-      "workspace": "proofnest_frontend"
+      "workspace": "LocalMart_frontend"
     }
   },
   "defaults": {

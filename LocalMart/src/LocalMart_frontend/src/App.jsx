@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { proofnest_backend } from 'declarations/proofnest_backend';
+import { LocalMart_backend } from 'declarations/LocalMart_backend';
 
 function App() {
   const [greeting, setGreeting] = useState('');
@@ -7,7 +7,7 @@ function App() {
   function handleSubmit(event) {
     event.preventDefault();
     const name = event.target.elements.name.value;
-    proofnest_backend.greet(name).then((greeting) => {
+    LocalMart_backend.greet(name).then((greeting) => {
       setGreeting(greeting);
     });
     return false;

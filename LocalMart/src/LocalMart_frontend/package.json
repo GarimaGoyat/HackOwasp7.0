@@ -1,10 +1,10 @@
 {
-  "name": "proofnest_frontend",
+  "name": "LocalMart_frontend",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "setup": "npm i && dfx canister create proofnest_backend && dfx generate proofnest_backend && dfx deploy",
+    "setup": "npm i && dfx canister create LocalMart_backend && dfx generate LocalMart_backend && dfx deploy",
     "start": "vite --port 3000",
     "prebuild": "dfx generate",
     "build": "tsc && vite build",

@@ -1,5 +1,5 @@
 [workspace]
 members = [
-    "src/proofnest_backend"
+    "src/LocalMart_backend"
 ]
 resolver = "2"
