@@ -1,0 +1,233 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto; /* Enable vertical scrolling */
+}
+
+.landing-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Navbar Styles */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-left .logo {
+  font-size: 20px;
+  font-weight: bold;
+  color: white;
+}
+
+/* Search Bar Container */
+.search-bar-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 800px; /* Increased the max-width to make the search bar longer */
+  margin: 20px auto; /* Center the search bar */
+}
+
+/* Search Icon */
+.search-icon {
+  position: absolute;
+  left: 10px;
+  color: #007bff; /* Blue color */
+  font-size: 16px;
+  pointer-events: none; /* Prevent interaction with the icon */
+}
+
+/* Search Bar */
+.search-bar {
+  width: 100%;
+  padding: 10px 10px 10px 30px; /* Add left padding for the search icon */
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.search-bar:focus {
+  border-color: #007bff;
+}
+
+.navbar-right .auth-btn {
+  padding: 8px 12px;
+  border: 1px solid white;
+  border-radius: 20px;
+  background-color: transparent;
+  color: white;
+  cursor: pointer;
+}
+
+.navbar-right .auth-btn:hover {
+  background-color: white;
+  color: #007bff;
+}
+
+/* Welcome Box Styles */
+.welcome-box {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 12px 20px; /* Adjusted padding for a rectangular shape */
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 10px 0; /* Reduced margin */
+  width: 90%; /* Adjusted width */
+  max-width: 600px;
+}
+
+.welcome-box:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.welcome-box .emoji {
+  font-size: 30px;
+}
+
+.welcome-box h2 {
+  margin: 10px 0;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.welcome-box p {
+  margin: 0;
+  font-size: 16px;
+  color: #555;
+}
+
+/* Verified Sellers Box Styles */
+.verified-box {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 12px 20px; /* Adjusted padding for a rectangular shape */
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 10px 0; /* Reduced margin */
+  width: 90%; /* Adjusted width */
+  max-width: 600px;
+}
+
+.verified-box:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.verified-box .emoji {
+  font-size: 30px;
+  color: #28a745;
+}
+
+.verified-box h3 {
+  margin: 10px 0;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.verified-box p {
+  margin: 0;
+  font-size: 16px;
+  color: #555;
+}
+
+/* Category Scroll */
+.category-scroll {
+  display: flex;
+  overflow-x: auto;
+  padding: 10px;
+}
+
+.category-btn {
+  background: #f8f9fa;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  padding: 8px 16px;
+  margin-right: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.category-btn.active {
+  background: #007bff;
+  color: white;
+}
+
+.category-btn:hover {
+  background: #0056b3;
+  color: white;
+}
+
+/* Product Grid */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 4 products per row */
+  gap: 20px;
+  width: 100%;
+  max-width: 1200px;
+  padding: 20px;
+}
+
+.product-card {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.product-card img {
+  max-width: 100%;
+  border-radius: 4px;
+}
+
+.product-card h3 {
+  margin: 10px 0;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.product-card p {
+  margin: 0;
+  font-size: 14px;
+  color: #555;
+}
+
+.verified-badge {
+  color: #28a745;
+  font-size: 14px;
+  font-weight: bold;
+}
