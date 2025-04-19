@@ -5,10 +5,14 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/your_project/blockchain"
+	"backend/blockchain"
 )
 
-var shopBlockchain = blockchain.NewBlockchain()
+var shopBlockchain *blockchain.Blockchain
+
+func InitShopVerificationRoutes(bc *blockchain.Blockchain) {
+	shopBlockchain = bc
+}
 
 // SubmitVerificationRequest handles shopkeeper verification requests
 func SubmitVerificationRequest(w http.ResponseWriter, r *http.Request) {
@@ -30,7 +34,7 @@ func SubmitVerificationRequest(w http.ResponseWriter, r *http.Request) {
 
 // GetVerificationRequests retrieves all verification requests
 func GetVerificationRequests(w http.ResponseWriter, r *http.Request) {
-	blocks := shopBlockchain.GetAllBlocks()
+	blocks := shopBlockchain.GetBlocks()
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(blocks)
 }
@@ -49,13 +53,27 @@ func UpdateVerificationStatus(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Update the blockchain (simplified for demonstration)
-	for _, block := range shopBlockchain.Chain {
-		if block.Data["shop_id"] == update.ShopID {
-			block.Data["status"] = update.Status
+	chain := shopBlockchain.GetBlocks()
+	for _, block := range chain {
+		// Assert that block.Data is a map[string]interface{}
+		data, ok := block.Data.(map[string]interface{})
+		if !ok {
+			http.Error(w, "Invalid block data format", http.StatusInternalServerError)
+			return
+		}
+
+		// Check and update the shop ID and status
+		if data["shop_id"] == update.ShopID {
+			data["status"] = update.Status
 			break
 		}
 	}
 
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(map[string]string{"message": "Verification status updated successfully"})
+}
+
+func GetShopVerificationRequests(w http.ResponseWriter, r *http.Request) {
+	blocks := shopBlockchain.GetBlocks() // Use GetBlocks instead of GetAllBlocks
+	json.NewEncoder(w).Encode(blocks)
 }

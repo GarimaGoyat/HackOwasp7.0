@@ -106,3 +106,57 @@ func (bc *Blockchain) AddShopVerificationRequest(request ShopVerificationRequest
 	}
 	bc.AddBlock(blockData)
 }
+
+// GetAllBlocks returns all blocks in the blockchain
+func (bc *Blockchain) GetAllBlocks() []*Block {
+	return bc.blocks
+}
+
+// Chain is an alias for the blocks in the blockchain
+func (bc *Blockchain) Chain() []*Block {
+	return bc.blocks
+}
+
+// Product represents a product in the system
+type Product struct {
+	ID        int    `json:"id"`
+	Name      string `json:"name"`
+	Price     string `json:"price"`
+	Shop      string `json:"shop"`
+	OnBlinkit bool   `json:"onBlinkit"`
+	Location  string `json:"location,omitempty"`
+	Category  string `json:"category,omitempty"`
+	Quantity  int    `json:"quantity,omitempty"`
+	Image     string `json:"image,omitempty"`
+}
+
+// GetProductsByShop retrieves all products for a specific shop
+func (bc *Blockchain) GetProductsByShop(shopName string) []Product {
+	var products []Product
+
+	for _, block := range bc.blocks {
+		// Assert that block.Data is a map[string]interface{}
+		data, ok := block.Data.(map[string]interface{})
+		if !ok {
+			continue
+		}
+
+		// Check if the block contains product data for the specified shop
+		if data["shop"] == shopName {
+			product := Product{
+				ID:        int(data["id"].(float64)), // Convert from float64 if necessary
+				Name:      data["name"].(string),
+				Price:     data["price"].(string),
+				Shop:      data["shop"].(string),
+				OnBlinkit: data["onBlinkit"].(bool),
+				Location:  data["location"].(string),
+				Category:  data["category"].(string),
+				Quantity:  int(data["quantity"].(float64)), // Convert from float64 if necessary
+				Image:     data["image"].(string),
+			}
+			products = append(products, product)
+		}
+	}
+
+	return products
+}

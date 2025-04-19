@@ -1,7 +1,8 @@
 package main
 
 import (
-	"backend/blockchain"
+	"backend/blockchain" // Corrected import path
+	"backend/routes"     // Corrected import path
 	"database/sql"
 	"encoding/json"
 	"fmt"
@@ -14,7 +15,6 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
-	"github.com/your_project/routes"
 )
 
 var bc *blockchain.Blockchain
@@ -57,7 +57,7 @@ var requestedItems = []Product{}
 
 func initializeDatabase() error {
 	// Connect to MySQL server (without database)
-	rootDB, err := sql.Open("mysql", "root:Ggoyat@15@tcp(127.0.0.1:3306)/")
+	rootDB, err := sql.Open("mysql", "root:ishi#282007@tcp(127.0.0.1:3306)/")
 	if err != nil {
 		return err
 	}
@@ -129,7 +129,7 @@ func initializeDatabase() error {
 func main() {
 	// Get DB credentials from env or use defaults
 	dbUser := getEnv("DB_USER", "root")
-	dbPass := getEnv("DB_PASS", "Ggoyat@15")
+	dbPass := getEnv("DB_PASS", "ishi#282007")
 	dbHost := getEnv("DB_HOST", "127.0.0.1")
 	dbPort := getEnv("DB_PORT", "3306")
 	dbName := getEnv("DB_NAME", "LocalMart")
@@ -198,6 +198,9 @@ func main() {
 	// New routes for products
 	http.HandleFunc("/api/products", routes.GetAllProducts)
 	http.HandleFunc("/api/products/add", routes.AddProduct)
+
+	// Example usage of GetProductsByShop
+	http.HandleFunc("/api/products/shop", handleGetProductsByShop)
 
 	fmt.Println("Server running on :8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
@@ -662,4 +665,17 @@ func requestVerification(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(map[string]string{"message": "Verification request submitted successfully"})
+}
+
+// Example usage of GetProductsByShop
+func handleGetProductsByShop(w http.ResponseWriter, r *http.Request) {
+	shopName := r.URL.Query().Get("shop")
+	if shopName == "" {
+		http.Error(w, "Shop name is required", http.StatusBadRequest)
+		return
+	}
+
+	products := bc.GetProductsByShop(shopName)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(products)
 }
