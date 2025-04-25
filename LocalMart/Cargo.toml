@@ -1,5 +1,0 @@
-[workspace]
-members = [
-    "src/LocalMart_backend"
-]
-resolver = "2"
