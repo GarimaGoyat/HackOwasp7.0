@@ -57,7 +57,7 @@ var requestedItems = []Product{}
 
 func initializeDatabase() error {
 	// Connect to MySQL server (without database)
-	rootDB, err := sql.Open("mysql", "root:ishi#282007@tcp(127.0.0.1:3306)/")
+	rootDB, err := sql.Open("mysql", "Ggoyat@15@tcp(127.0.0.1:3306)/")
 	if err != nil {
 		return err
 	}
@@ -129,9 +129,9 @@ func initializeDatabase() error {
 func main() {
 	// Get DB credentials from env or use defaults
 	dbUser := getEnv("DB_USER", "root")
-	dbPass := getEnv("DB_PASS", "ishi#282007")
+	dbPass := getEnv("DB_PASS", "Ggoyat@15")
 	dbHost := getEnv("DB_HOST", "127.0.0.1")
-	dbPort := getEnv("DB_PORT", "3306")
+	dbPort := getEnv("DB_PORT", "3000")
 	dbName := getEnv("DB_NAME", "LocalMart")
 
 	// Connection string
