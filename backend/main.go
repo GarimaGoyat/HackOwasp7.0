@@ -57,7 +57,7 @@ var requestedItems = []Product{}
 
 func initializeDatabase() error {
 	// Connect to MySQL server (without database)
-	rootDB, err := sql.Open("mysql", "Ggoyat@15@tcp(127.0.0.1:3306)/")
+	rootDB, err := sql.Open("mysql", "root:Ggoyat@15@tcp(127.0.0.1:3306)/")
 	if err != nil {
 		return err
 	}
@@ -507,124 +507,34 @@ func getAllProducts(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(products)
 }
 
-// Add this function to handle fetching shop details
-func getShopDetails(w http.ResponseWriter, r *http.Request) {
-	cookie, err := r.Cookie("token")
-	if err != nil {
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
-		return
-	}
+// Add these admin-specific endpoints under protected routes
+api.HandleFunc("/admin/users", adminMiddleware(getAllUsers)).Methods("GET")
+api.HandleFunc("/admin/users/{id}", adminMiddleware(deleteUser)).Methods("DELETE")
+api.HandleFunc("/admin/verifications", adminMiddleware(getAllVerifications)).Methods("GET")
+api.HandleFunc("/admin/verifications/{id}", adminMiddleware(approveVerification)).Methods("PUT")
 
-	claims := &Claims{}
-	token, err := jwt.ParseWithClaims(cookie.Value, claims, func(token *jwt.Token) (interface{}, error) {
-		return jwtKey, nil
-	})
-	if err != nil || !token.Valid {
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
-		return
-	}
-
-	var shop struct {
-		ShopName string `json:"shopName"`
-		Email    string `json:"email"`
-		Phone    string `json:"phone"`
-		Address  string `json:"address"`
-		LogoURL  string `json:"logoUrl"`
-	}
-
-	err = db.QueryRow("SELECT shop_name, email, phone, address, logo_url FROM shops WHERE user_id = (SELECT id FROM users WHERE username = ?)", claims.Username).Scan(&shop.ShopName, &shop.Email, &shop.Phone, &shop.Address, &shop.LogoURL)
-	if err != nil {
-		http.Error(w, "Failed to fetch shop details", http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(shop)
+// Add admin middleware function
+func adminMiddleware(next http.HandlerFunc) http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        claims, ok := r.Context().Value("claims").(*Claims)
+        if !ok || claims.Role != "admin" {
+            http.Error(w, "Forbidden", http.StatusForbidden)
+            return
+        }
+        next(w, r)
+    }
 }
 
-// Add this function to handle updating shop details
-func updateShopDetails(w http.ResponseWriter, r *http.Request) {
-	cookie, err := r.Cookie("token")
-	if err != nil {
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
-		return
-	}
-
-	claims := &Claims{}
-	token, err := jwt.ParseWithClaims(cookie.Value, claims, func(token *jwt.Token) (interface{}, error) {
-		return jwtKey, nil
-	})
-	if err != nil || !token.Valid {
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
-		return
-	}
-
-	var shop struct {
-		ShopName string `json:"shopName"`
-		Email    string `json:"email"`
-		Phone    string `json:"phone"`
-		Address  string `json:"address"`
-		LogoURL  string `json:"logoUrl"`
-	}
-
-	if err := json.NewDecoder(r.Body).Decode(&shop); err != nil {
-		http.Error(w, "Invalid request body", http.StatusBadRequest)
-		return
-	}
-
-	_, err = db.Exec("UPDATE shops SET shop_name = ?, email = ?, phone = ?, address = ?, logo_url = ? WHERE user_id = (SELECT id FROM users WHERE username = ?)", shop.ShopName, shop.Email, shop.Phone, shop.Address, shop.LogoURL, claims.Username)
-	if err != nil {
-		http.Error(w, "Failed to update shop details", http.StatusInternalServerError)
-		return
-	}
-
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(map[string]string{"message": "Shop details updated successfully"})
+// Add admin-specific handlers
+func getAllUsers(w http.ResponseWriter, r *http.Request) {
+	rows, err := db.Query("SELECT id, username, role_id FROM users")
+	// Query and return all users
 }
 
-func getProductByID(w http.ResponseWriter, r *http.Request) {
-	productID := r.URL.Query().Get("id")
-	if productID == "" {
-		http.Error(w, "Product ID is required", http.StatusBadRequest)
-		return
-	}
-
-	var product struct {
-		ID       int     `json:"id"`
-		Name     string  `json:"name"`
-		Category string  `json:"category"`
-		Price    float64 `json:"price"`
-		Quantity int     `json:"quantity"`
-		Image    string  `json:"image"`
-	}
-
-	err := db.QueryRow("SELECT id, name, category, price, quantity, image_url FROM products WHERE id = ?", productID).Scan(
-		&product.ID, &product.Name, &product.Category, &product.Price, &product.Quantity, &product.Image,
-	)
-	if err != nil {
-		http.Error(w, "Product not found", http.StatusNotFound)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(product)
-}
-
-func deleteProduct(w http.ResponseWriter, r *http.Request) {
-	productID := r.URL.Query().Get("id")
-	if productID == "" {
-		http.Error(w, "Product ID is required", http.StatusBadRequest)
-		return
-	}
-
-	_, err := db.Exec("DELETE FROM products WHERE id = ?", productID)
-	if err != nil {
-		http.Error(w, "Failed to delete product", http.StatusInternalServerError)
-		return
-	}
-
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(map[string]string{"message": "Product deleted successfully"})
+func deleteUser(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	_, err := db.Exec("DELETE FROM users WHERE id = ?", vars["id"])
+	// Delete user logic
 }
 
 func requestVerification(w http.ResponseWriter, r *http.Request) {
