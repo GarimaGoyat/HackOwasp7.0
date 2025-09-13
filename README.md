@@ -36,28 +36,7 @@ cd frontend
 npm start
 ```
 
-# Blinket Gap Filler 🛍️
 
-This is a hackathon project that supports local campus shopkeepers by showcasing items **not available on Blinkit**, but available inside our campus.
-
-## 💡 Problem
-
-Due to Blinkit delivery being widely available, students are ignoring local shops inside the campus. This is reducing their sales even though they offer unique and essential products.
-
-## ✅ Solution
-
-Our website helps:
-- Highlight products that **are not on Blinkit**
-- Promote **in-campus shops**
-- Allow students to discover what’s available nearby
-
-## 📁 Features
-
-- 🛒 Student Login Page
-- 🏠 Homepage to browse local shop products
-- 🔍 Filter products not available on Blinkit
-- 📍 Shop location (optional)
-- 🧑‍💻 Admin/Shopkeeper panel (future enhancement)
 
 ## 🚀 Getting Started
 
@@ -82,17 +61,7 @@ To get started with the project locally, follow these steps:
    ```bash
    go run main.go
 
-## 🌟 Features
 
-- User login and homepage
-- Listings of campus-only items
-- Basic inventory and comparison with Blinkit
-
-## 🚧 Future Scope
-
-- Admin portal for shopkeepers
-- Real-time inventory sync
-- Mobile-friendly UI and delivery tracking
 
 # To connect db
 
